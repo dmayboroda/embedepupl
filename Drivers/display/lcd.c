@@ -1324,6 +1324,57 @@ void LCD_SetRotation(uint8_t x) {
 }
 
 /**
+ * \brief  Draws an array of pixels picture loaded in the STM32 MCU internal memory.
+ *
+ * \param xPos		Bmp X position in the LCD
+ * \param yPos		Bmp Y position in the LCD
+ * \param pBmp		Pointer to Bmp picture address
+ * \param height	Bitmap height
+ * \param height	Bitmap width
+ * \return void
+ */
+
+void LCD_DrawPixelArray(int16_t xPos, int16_t yPos, const uint8_t *pBmp, uint32_t height, uint32_t width) {
+	uint8_t *start;
+	uint8_t *end;
+	uint32_t size = 0;
+
+	/* Read bitmap size */
+	size = height * width * 2; // 16 bit data
+	/* Read color depth */
+	start = (uint8_t *) pBmp;
+	end = (uint8_t *) pBmp + size;
+
+	LCD_SetAddrWindow(xPos, yPos, xPos + width - 1, yPos + abs(height) - 1);
+	LCD_CS_ACTIVE();
+	LCD_CD_COMMAND();
+	#if  defined(ILI9325) || defined(ILI9328) || defined(R61505) || defined(S6D0154)
+	  LCD_Write8(0x00); // High byte of GRAM register...
+	  LCD_Write8(ILI932X_GRAM_WR); // Write data to GRAM
+	#elif defined(ILI9340) || defined(ILI9341) || defined(ILI9341_00) || defined(R61520) || defined(UNKNOWN1602)
+	  LCD_Write8(ILI9341_MEMORYWRITE); // Write data to GRAM
+	#elif defined(HX8347G)
+	  LCD_Write8(HX8347G_SRAM_WR); // Write data to GRAM
+	#elif defined(HX8357D)
+	  LCD_Write8(HX8357_RAMWR); // Write data to GRAM
+	#endif
+	  LCD_CD_DATA();
+
+	pBmp = start;
+	while (pBmp < end) {
+		//if (*(pBmp + 1) || *(pBmp)){
+			LCD_Write8(*(pBmp));
+			LCD_Write8(*(pBmp + 1));
+		//}
+	    pBmp += 2;
+	}
+
+	LCD_CS_IDLE();
+	LCD_SetAddrWindow(0, 0, m_width - 1, m_height - 1);
+
+}
+
+/**
  * \brief  Draws a BMP picture loaded in the STM32 MCU internal memory.
  *
  * \param xPos		Bmp X position in the LCD
@@ -1360,7 +1411,7 @@ void LCD_DrawBMP(int16_t xPos, int16_t yPos, const uint8_t *pBmp) {
 	LCD_CS_ACTIVE();
 	LCD_CD_COMMAND();
 #if	defined(ILI9325) || defined(ILI9328) || defined(R61505) || defined(S6D0154)
-	LCD_Write8(0x00); // High byte of GRAM register...
+	LCD_Write8(0x200); // High byte of GRAM register...
 	LCD_Write8(ILI932X_GRAM_WR); // Write data to GRAM
 #elif defined(ILI9340) || defined(ILI9341) || defined(ILI9341_00) || defined(R61520) || defined(UNKNOWN1602)
 	LCD_Write8(ILI9341_MEMORYWRITE); // Write data to GRAM

@@ -94,13 +94,24 @@ int main(void)
   /* USER CODE BEGIN 2 */
   LCD_Init();
   /* USER CODE END 2 */
-
+  LCD_SetRotation(1);
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
   /* USER CODE END WHILE */
-	  LCD_DrawBMP(0, 0, hurt);
+	  LCD_DrawPixelArray(TFTWIDTH/1.7, TFTHEIGHT/2, run0, 32, 32);
+	  HAL_Delay(100);
+	  LCD_DrawPixelArray(TFTWIDTH/1.7, TFTHEIGHT/2, run1, 32, 32);
+	  HAL_Delay(100);
+	  LCD_DrawPixelArray(TFTWIDTH/1.7, TFTHEIGHT/2, run2, 32, 32);
+	  HAL_Delay(100);
+	  LCD_DrawPixelArray(TFTWIDTH/1.7, TFTHEIGHT/2, run3, 32, 32);
+	  HAL_Delay(100);
+	  LCD_DrawPixelArray(TFTWIDTH/1.7, TFTHEIGHT/2, run4, 32, 32);
+	  HAL_Delay(100);
+	  LCD_DrawPixelArray(TFTWIDTH/1.7, TFTHEIGHT/2, run5, 32, 32);
+	  HAL_Delay(100);
   /* USER CODE BEGIN 3 */
 
   }
